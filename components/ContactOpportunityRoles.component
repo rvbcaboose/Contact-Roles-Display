@@ -1,0 +1,48 @@
+<apex:component controller="OppAccountRolesCompController">
+	<apex:attribute name="contactId" type="Id" assignTo="{!contactId}"
+		required="true"
+		description="Contact ID for whom Account roles should be shown" />
+
+	<apex:attribute name="showOppRecordType" type="boolean" default="true"
+		description="Decides whether record type column of Account sobject should be shown" />
+
+	<apex:attribute name="title" type="String"
+		description="Title to be shown for the grid" />
+
+	<apex:attribute name="noRolesMessage" type="boolean" default="false"
+		description="Pass true, if you want to show a message in case the contact is not part of any roles" />
+
+	<apex:pageBlock title="{!IF(ISBLANK(title), '', title)}">
+		<apex:pageBlockTable value="{!opportunityRoles}" var="role">
+			<apex:column headerValue="Opportunity Name">
+				<apex:outputLink value="{!URLFOR($Action.Opportunity.View, role.OpportunityId, [retURL=URLFOR($Action.Contact.View, $CurrentPage.parameters.Id)])}"
+					target="_top">
+					{!role.Opportunity.Name}
+				</apex:outputLink>
+			</apex:column>
+
+			<apex:column headerValue="Opportunity Type"
+				value="{!role.Opportunity.RecordType.Name}"
+				rendered="{!showOppRecordType}" />
+
+			<apex:column headerValue="{!$ObjectType.OpportunityContactRole.fields.Role.Label}"
+				value="{!role.Role}" />
+
+			<apex:column headerValue="{!$ObjectType.OpportunityContactRole.fields.IsPrimary.Label}">
+
+				<apex:image value="/img/checkbox_checked.gif" alt="Checked"
+					width="21" height="16" styleClass="checkImg" title="Checked"
+					rendered="{!role.isPrimary}" />
+
+				<apex:image value="/img/checkbox_unchecked.gif" alt="Not Checked"
+					width="21" height="16" styleClass="checkImg" title="Not Checked"
+					rendered="{!NOT(role.isPrimary)}" />
+
+			</apex:column>
+		</apex:pageBlockTable>
+
+		<apex:pageMessage summary="No associations with Opportunity in any role"
+			severity="warning" strength="3"
+			rendered="{!AND (noRolesMessage, opportunityRoles.size == 0)}" />
+	</apex:pageBlock>
+</apex:component>

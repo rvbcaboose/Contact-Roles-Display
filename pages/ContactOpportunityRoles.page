@@ -1,0 +1,4 @@
+<apex:page sidebar="false" showHeader="false"
+	standardController="Contact">
+	<c:ContactOpportunityRoles contactId="{!Contact.Id}" showOppRecordType="true" noRolesMessage="true"/>
+</apex:page>
